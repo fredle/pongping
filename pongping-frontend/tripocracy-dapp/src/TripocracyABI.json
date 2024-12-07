@@ -1,0 +1,40 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        }
+      ],
+      "name": "createProposal",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "clearProposals",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getAllProposals",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "voteCount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
