@@ -2,8 +2,8 @@ node_modules
 .env
 
 # Hardhat files
-/cache
-/artifacts
+pongping-contracts/cache
+pongping-contracts/artifacts
 
 # TypeChain files
 /typechain
@@ -22,7 +22,10 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build directory
-build/
+**/build/
+**/artifacts/
 
 # Ignition deployments
-ignition/deployments/
+**/ignition/deployments/
+
+**/node_modules

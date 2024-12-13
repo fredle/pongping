@@ -8,7 +8,7 @@ contract CoinToss is ERC721 {
     // Address of the owner (deployer)
     address public owner;
 
-
+    address[] private players;
     // Mapping to store user balances
     mapping(address => uint256) public balances;
 
@@ -22,8 +22,17 @@ contract CoinToss is ERC721 {
     constructor() ERC721("CoinToss", "CTC") payable {
         require(msg.value > 0, "Contract must be deployed with an initial balance");
         owner = msg.sender;
+        addPlayer(owner);
         balances[owner] = msg.value;
     }
+
+    // Function to add a player (example function, adjust as needed)
+    function addPlayer(address player) internal {
+        if (balances[player] == 0) {
+            players.push(player);
+        }
+    }
+
 
     // Modifier to restrict functions to the owner
     modifier onlyOwner() {
@@ -34,6 +43,7 @@ contract CoinToss is ERC721 {
     // Function for users to deposit Ether
     function depositFunds() external payable {
         require(msg.value > 0, "Deposit amount must be greater than zero");
+        addPlayer(msg.sender);
         balances[msg.sender] += msg.value;
         emit Deposit(msg.sender, msg.value);
     }
@@ -44,11 +54,7 @@ contract CoinToss is ERC721 {
         require(betAmount > 0, "Bet amount must be greater than zero");
         require(betAmount <= balances[msg.sender], "Insufficient balance to place bet");
 
-        // Simulate a coin toss (heads = 1, tails = 0)
-        uint256 rand = random();
-        uint256 normalized = rand % 100;  // Get a number between 0 and 99
-        uint256 toss = normalized < 50 ? 0 : 1;  // Map 0-49 to 0 and 50-99 to 1
-
+        uint256 toss = random();
         if (toss == 1) {
             // User wins: double their bet amount
             uint256 winnings = betAmount * 2;
@@ -62,11 +68,35 @@ contract CoinToss is ERC721 {
             emit CoinTossResult(msg.sender, "Tails", 0);
         }
     }
+
+    // Public function to test the private random function
+    function testRandom() public view onlyOwner returns (uint256) {
+        return random();
+    }
+
     // Helper function for pseudo-random number generation
     function random() private view returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, msg.sender)));
+        uint256 rand = uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, msg.sender)));
+                // Simulate a coin toss (heads = 1, tails = 0)
+        uint256 normalized = rand % 100;  // Get a number between 0 and 99
+        uint256 toss = normalized < 50 ? 0 : 1;  // Map 0-49 to 0 and 50-99 to 1
+        return toss;
     }
     
+    // Function to list all players and their balances (owner only)
+    function listAllPlayers() external view onlyOwner returns (address[] memory, uint256[] memory) {
+        uint256 playerCount = players.length;
+        address[] memory playerAddresses = new address[](playerCount);
+        uint256[] memory playerBalances = new uint256[](playerCount);
+
+        for (uint256 i = 0; i < playerCount; i++) {
+            address player = players[i];
+            playerAddresses[i] = player;
+            playerBalances[i] = balances[player];
+        }
+
+        return (playerAddresses, playerBalances);
+    }
     // Function to check the contract's balance
     function getContractBalance() external view returns (uint256) {
         return address(this).balance;
