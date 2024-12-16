@@ -55,18 +55,17 @@ contract CoinToss is ERC721 {
         require(betAmount <= balances[msg.sender], "Insufficient balance to place bet");
 
         uint256 toss = random();
+        uint256 winnings = 0;
         if (toss == 1) {
             // User wins: double their bet amount
-            uint256 winnings = betAmount * 2;
+            winnings = betAmount * 2;
             require(address(this).balance >= winnings, "Contract does not have enough funds");
             balances[msg.sender] += betAmount;
-            //payable(msg.sender).transfer(winnings);
-            emit CoinTossResult(msg.sender, "Heads", winnings);
         } else {
             // User loses: deduct their bet amount
             balances[msg.sender] -= betAmount;
-            emit CoinTossResult(msg.sender, "Tails", 0);
         }
+        emit CoinTossResult(msg.sender, toss == 1 ? "Heads" : "Tails", winnings);
     }
 
     // Public function to test the private random function

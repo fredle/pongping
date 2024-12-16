@@ -24,6 +24,7 @@ describe("CoinToss", function () {
     beforeEach(async function () {
         CoinToss = await ethers.getContractFactory("CoinToss");
         [owner, addr1, addr2, _] = await ethers.getSigners();
+        console.log("owner", owner.address);
         coinToss = await CoinToss.deploy({ value: ethers.parseEther("1") });
         console.log("deployed to",coinToss.target);
     });
